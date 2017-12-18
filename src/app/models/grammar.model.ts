@@ -26,8 +26,6 @@ export class Rule {
   constructor (lft: string, rgh: string) {
     this.leftPart = new Symbol(lft);
 
-    rghPart = SplitTo
-
     if (this.rightPart === undefined) {
       this.rightPart = [];
     }

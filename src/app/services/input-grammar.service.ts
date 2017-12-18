@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GrammarModel, Rule } from '../models/grammar.model';
+import { GrammarModel, Rule, Symbol } from '../models/grammar.model';
 
 @Injectable()
 export class InputGrammarService {
@@ -8,8 +8,7 @@ export class InputGrammarService {
   epsilonRules: Array<Rule>;
   nongeneratingSymbols: Array<string>;
   unreachableSymbols: Array<string>;
-  generatingSymbols: Array<string>;
-  reachableSymbols: Array<string>;
+  reachableSymbols: Array<Symbol>;
 
   constructor() {
     this.epsilonRules = [];
@@ -18,8 +17,8 @@ export class InputGrammarService {
   }
 
   addTerminal(val: string): void {
-    if (this.G !== undefined && this.G && val !== '' && val !== null && this.G.terminalSymbols.indexOf(val) === -1) {
-      this.G.terminalSymbols.push(new Symbol(val);
+    if (this.G !== undefined && this.G && val !== '' && val !== null && this.G.terminalSymbols.indexOf(new Symbol(val)) === -1) {
+      this.G.terminalSymbols.push(new Symbol(val));
     }
   }
 
@@ -38,8 +37,8 @@ export class InputGrammarService {
   }
 
   addNonterminal(val: string): void {
-    if (this.G !== undefined && this.G && val !== '' && val !== null && this.G.nonterminalSymbols.indexOf(val) === -1) {
-      this.G.nonterminalSymbols.push(val);
+    if (this.G !== undefined && this.G && val !== '' && val !== null && this.G.nonterminalSymbols.indexOf(new Symbol(val)) === -1) {
+      this.G.nonterminalSymbols.push(new Symbol(val));
     }
   }
 
@@ -58,8 +57,8 @@ export class InputGrammarService {
   }
 
   addInitialSymbol(S: string): boolean {
-    if (this.G.nonterminalSymbols.indexOf(S) !== -1) {
-      this.G.initialSymbol = S;
+    if (this.G.nonterminalSymbols.indexOf(new Symbol(S)) !== -1) {
+      this.G.initialSymbol = new Symbol(S);
       return true;
     } else {
       return false;
@@ -80,8 +79,8 @@ export class InputGrammarService {
         const l = this.G.inferenceRules.length;
 
         for (let i = 0; i < l; i++) {
-          if (this.G.inferenceRules[i].leftPart === lft) {
-            this.G.inferenceRules[i].rightPart.push(rgh);
+          if (this.G.inferenceRules[i].leftPart.symbol === lft) {
+            // this.G.inferenceRules[i].rightPart.push(new Symbol(rgh));
             f = true;
           }
         }
@@ -94,19 +93,19 @@ export class InputGrammarService {
   }
 
   CheckNonterminal(nonterminal: string): boolean {
-    return (this.G.nonterminalSymbols.indexOf(nonterminal) !== -1) ? (true) : (false);
+    return (this.G.nonterminalSymbols.indexOf(new Symbol(nonterminal)) !== -1) ? (true) : (false);
   }
 
   CheckRghPart(str: string): boolean {
     for (const s of this.G.terminalSymbols) {
-      while (str.includes(s)) {
-        str = str.replace(s, '');
+      while (str.includes(s.symbol)) {
+        str = str.replace(s.symbol, '');
       }
     }
 
     for (const s of this.G.nonterminalSymbols) {
-      while (str.includes(s)) {
-        str = str.replace(s, '');
+      while (str.includes(s.symbol)) {
+        str = str.replace(s.symbol, '');
       }
     }
 
@@ -150,38 +149,22 @@ export class InputGrammarService {
   }
 
   removeNonGeneratingSymbols(): void {
-    for (const X of this.G.nonterminalSymbols) {
-      if (!this.IsGenerating(X)) {
-        this.nongeneratingSymbols.push(X);
-        this.removeSymbol(X);
-      }
-    }
   }
 
   IsGenerating(s: string): boolean {
-
+    return true;
   }
 
   removeSymbol(s: string): void {
-    this.G.nonterminalSymbols = this.G.nonterminalSymbols.filter((symbol) => symbol !== s);
-    this.G.inferenceRules = this.G.inferenceRules.filter((r) => r.leftPart !== s);
 
-    for (const rule of this.G.inferenceRules) {
-        rule.rightPart = rule.rightPart.filter((r) => !r.includes(s));
-    }
   }
 
   removeUnreachableSymbols(): void {
-    for (const X of this.G.nonterminalSymbols) {
-      if (!this.IsReachable(X)) {
-        this.unreachableSymbols.push(X);
-        this.removeSymbol(X);
-      }
-    }
+
   }
 
   IsReachable(s: string): boolean {
-
+    return true;
   }
 
   removeEpsilonRules(): void {
