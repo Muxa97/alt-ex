@@ -1,0 +1,33 @@
+
+.input-wrapper {
+  margin: 10px;
+}
+
+input {
+  margin: 0 5px;
+  height: 40px;
+  width: 100px;
+  border: 0;
+  border-bottom: 2px solid #080e9d;
+}
+
+.btn {
+  width: 120px;
+  height: 40px;
+  margin: 10px 0 0 0;
+  border: 1px solid white;
+  background-color: #274bc1;
+  color: white;
+}
+
+.btn:hover {
+  background-color: #0012b1;
+}
+
+.rgh-part {
+  width: 70px;
+}
+
+.rgh-parts-wrapper {
+  display: inline-flex;
+}

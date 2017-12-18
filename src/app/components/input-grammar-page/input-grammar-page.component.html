@@ -1,0 +1,62 @@
+<div class="form-wrapper">
+  <form [formGroup]="grammarForm" novalidate>
+    <mat-horizontal-stepper [linear]="true">
+      <mat-step [stepControl]="inputTerminals">
+        <ng-template matStepLabel>Ввод терминалов</ng-template>
+        <div class="input-wrapper">
+          <label>Введите символ:</label>
+          <input placeholder="Terminal" formControlName="termSymbol" (keyup.ENTER)="addTerminal()"/>
+          <button class="btn" (click)="addTerminal()">Добавить символ</button>
+        </div>
+        <div>
+          <button mat-button matStepperNext>Вперед</button>
+        </div>
+      </mat-step>
+      <mat-step [stepControl]="inputNonterminals">
+        <ng-template matStepLabel>Ввод нетерминалов</ng-template>
+        <div class="input-wrapper">
+          <label>Введите символ:</label>
+          <input placeholder="Nonterminal" formControlName="nontermSymbol" (keyup.ENTER)="addNonterminal()"/>
+          <button class="btn" (click)="addNonterminal()">Добавить символ</button>
+        </div>
+        <div>
+          <button mat-button matStepperPrevious>Назад</button>
+          <button mat-button matStepperNext>Вперед</button>
+        </div>
+      </mat-step>
+      <mat-step [stepControl]="inputRules">
+        <ng-template matStepLabel>Ввод правил вывода</ng-template>
+        <div class="input-wrapper">
+          <label>Введите начальный символ:</label>
+          <input placeholder="Initial symbol" formControlName="initialSymb" (keyup.ENTER)="addInitialS()"/>
+          <button class="btn" (click)="addInitialS()">Добавить символ</button>
+        </div>
+        <div class="input-wrapper">
+          <label>Введите правило вывода:</label>
+          <input placeholder="Left part" formControlName="leftPart"/>
+          →
+          <input class="rgh-part" placeholder="Right part" formControlName="rightPart" (keyup.ENTER)="addRule()"/>
+          <button class="btn" (click)="addRule()">Добавить правило</button>
+        </div>
+        <div>
+          <button mat-button matStepperPrevious>Назад</button>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </form>
+</div>
+<div class="data-wrapper">
+  <label>Грамматика G = &#123;T, N, P, S&#125;</label>
+  <div>
+    T = &#123; {{this.grammarService.outputTerminals()}} &#125;
+  </div>
+  <div>
+    N = &#123; {{this.grammarService.outputNonterminals()}} &#125;
+  </div>
+  <div>
+    P = &#123; {{this.grammarService.outputRules()}} &#125;
+  </div>
+  <div>
+    S = {{this.grammarService.G.initialSymbol}}
+  </div>
+</div>

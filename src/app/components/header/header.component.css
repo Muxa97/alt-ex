@@ -1,0 +1,22 @@
+mat-toolbar {
+}
+
+mat-toolbar-row {
+  height: 50px;
+  margin: 5px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  user-select: none;
+}
+
+.lnk {
+  margin: 5px;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(213, 213, 213, 0.5);
+}
+
+.lnk:hover {
+  background-color: rgba(0, 5, 181, 0.5);
+  cursor: pointer;
+}
