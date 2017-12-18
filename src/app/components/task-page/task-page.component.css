@@ -1,0 +1,11 @@
+.task-page-wrapper {
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  border-bottom: 2px solid #0048ff;
+}
+
+p {
+  margin: 0;
+  padding: 10px;
+}

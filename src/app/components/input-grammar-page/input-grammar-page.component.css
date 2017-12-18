@@ -1,4 +1,6 @@
-
+.form-wrapper {
+  height: auto;
+}
 .input-wrapper {
   margin: 10px;
 }
@@ -8,7 +10,7 @@ input {
   height: 40px;
   width: 100px;
   border: 0;
-  border-bottom: 2px solid #080e9d;
+  border-bottom: 2px solid #0048ff;
 }
 
 .btn {
@@ -30,4 +32,14 @@ input {
 
 .rgh-parts-wrapper {
   display: inline-flex;
+}
+
+.data-wrapper {
+  padding: 10px;
+  border-top: 2px solid #0048ff;
+  font-size: 1.1em;
+}
+
+.data-wrapper label {
+  font-size: 1.2em;
 }

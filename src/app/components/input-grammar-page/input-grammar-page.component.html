@@ -48,15 +48,15 @@
 <div class="data-wrapper">
   <label>Грамматика G = &#123;T, N, P, S&#125;</label>
   <div>
-    T = &#123; {{this.grammarService.outputTerminals()}} &#125;
+    T (алфавит терминалов) = &#123; {{this.grammarService.outputTerminals()}} &#125;
   </div>
   <div>
-    N = &#123; {{this.grammarService.outputNonterminals()}} &#125;
+    N (алфавит нетерминалов) = &#123; {{this.grammarService.outputNonterminals()}} &#125;
   </div>
   <div>
-    P = &#123; {{this.grammarService.outputRules()}} &#125;
+    P (правила вывода) = &#123; {{this.grammarService.outputRules()}} &#125;
   </div>
   <div>
-    S = {{this.grammarService.G.initialSymbol}}
+    S (начаьный символ) = {{this.grammarService.G.initialSymbol.symbol}}
   </div>
 </div>

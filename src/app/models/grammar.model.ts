@@ -19,16 +19,18 @@ export class GrammarModel implements IGrammar {
   }
 }
 
-export class Rule {
+export interface IRule {
+  leftPart?: Symbol;
+  rightPart?: Array<RightPart>;
+}
+
+export class Rule implements IRule {
   leftPart: Symbol;
   rightPart: Array<RightPart>;
 
-  constructor (lft: string, rgh: string) {
-    this.leftPart = new Symbol(lft);
-
-    if (this.rightPart === undefined) {
-      this.rightPart = [];
-    }
+  constructor (rule: IRule) {
+    this.leftPart = rule.leftPart || new Symbol('');
+    this.rightPart = rule.rightPart || [];
   }
 }
 

@@ -3,150 +3,154 @@ import { GrammarModel, Rule, Symbol } from '../models/grammar.model';
 
 @Injectable()
 export class InputGrammarService {
-  G = new GrammarModel({});
-
-  epsilonRules: Array<Rule>;
-  nongeneratingSymbols: Array<string>;
-  unreachableSymbols: Array<string>;
-  reachableSymbols: Array<Symbol>;
+  G: GrammarModel;
 
   constructor() {
-    this.epsilonRules = [];
-    this.nongeneratingSymbols = [];
-    this.unreachableSymbols = [];
+    this.G = new GrammarModel({});
   }
 
   addTerminal(val: string): void {
-    if (this.G !== undefined && this.G && val !== '' && val !== null && this.G.terminalSymbols.indexOf(new Symbol(val)) === -1) {
-      this.G.terminalSymbols.push(new Symbol(val));
+    if (val !== '' && val !== undefined && val !== null) {
+      let f = true;
+
+      for (const t of this.G.terminalSymbols) {
+        if (t.symbol === val) {
+          f = false;
+          break;
+        }
+      }
+
+      if (f) {
+        this.G.terminalSymbols.push(new Symbol(val));
+      }
     }
   }
 
   outputTerminals(): string {
     let str = '';
-    const l = this.G.terminalSymbols.length;
-    for (let i = 0; i < l - 1; i++) {
-      str += ' ' + this.G.terminalSymbols[i] + ', ';
-    }
-
-    if (l !== 0) {
-      str += this.G.terminalSymbols[l - 1];
+    let i = 0;
+    for (const term of this.G.terminalSymbols) {
+      str += ' ' + term.symbol + ((++i === this.G.terminalSymbols.length) ? (' ') : (','));
     }
 
     return str;
   }
 
   addNonterminal(val: string): void {
-    if (this.G !== undefined && this.G && val !== '' && val !== null && this.G.nonterminalSymbols.indexOf(new Symbol(val)) === -1) {
-      this.G.nonterminalSymbols.push(new Symbol(val));
+    if (val !== '' && val !== undefined && val !== null) {
+      let f = true;
+
+      for (const t of this.G.nonterminalSymbols) {
+        if (t.symbol === val) {
+          f = false;
+          break;
+        }
+      }
+
+      if (f) {
+        this.G.nonterminalSymbols.push(new Symbol(val));
+      }
     }
   }
 
   outputNonterminals(): string {
     let str = '';
-    const l = this.G.nonterminalSymbols.length;
-    for (let i = 0; i < l - 1; i++) {
-      str += ' ' + this.G.nonterminalSymbols[i] + ', ';
-    }
-
-    if (l !== 0) {
-      str += this.G.nonterminalSymbols[l - 1];
+    let i = 0;
+    for (const term of this.G.nonterminalSymbols) {
+      str += ' ' + term.symbol + ((++i === this.G.nonterminalSymbols.length) ? (' ') : (','));
     }
 
     return str;
   }
 
   addInitialSymbol(S: string): boolean {
-    if (this.G.nonterminalSymbols.indexOf(new Symbol(S)) !== -1) {
-      this.G.initialSymbol = new Symbol(S);
-      return true;
-    } else {
-      return false;
+    for (const s of this.G.nonterminalSymbols) {
+      if (s.symbol === S) {
+        this.G.initialSymbol = new Symbol(S);
+        return true;
+      }
     }
+
+    return false;
   }
 
   addRule(lft: string, rgh: string): void {
-    if (lft !== '' && lft !== undefined) {
-
-      if (this.CheckNonterminal(lft) && this.CheckRghPart(rgh)) {
-
-        if (rgh === null || rgh === '' || rgh === undefined) {
-          rgh = '\u03B5';
-          this.epsilonRules.push(new Rule(lft, rgh));
-        }
-
-        let f = false;
-        const l = this.G.inferenceRules.length;
-
-        for (let i = 0; i < l; i++) {
-          if (this.G.inferenceRules[i].leftPart.symbol === lft) {
-            // this.G.inferenceRules[i].rightPart.push(new Symbol(rgh));
-            f = true;
-          }
-        }
-
-        if (!f) {
-          this.G.inferenceRules.push(new Rule(lft, rgh));
-        }
+    let f = false;
+    for (const r of this.G.inferenceRules) {
+      if (r.leftPart.symbol === lft && this.strToSymbolArray(rgh).length !== 0) {
+        r.rightPart.push({rgh: this.strToSymbolArray(rgh)});
+        f = true;
+        break;
       }
     }
+    if (!f && this.CheckNonterminal(lft) && this.strToSymbolArray(rgh).length !== 0) {
+      this.G.inferenceRules.push( { leftPart: new Symbol(lft),
+                                    rightPart: [ {rgh: this.strToSymbolArray(rgh)} ] } );
+    }
+  }
+
+  strToSymbolArray(s: string): Array<Symbol> {
+    let r: Array<Symbol>;
+    r = [];
+    while (s !== '') {
+      let f = false;
+
+      for (const symb of this.G.terminalSymbols) {
+        if (s.startsWith(symb.symbol)) {
+          r.push(symb);
+          s = s.replace(symb.symbol, '');
+          f = true;
+          break;
+        }
+      }
+      if (!f) {
+        for (const symb of this.G.nonterminalSymbols) {
+          if (s.startsWith(symb.symbol)) {
+            r.push(symb);
+            s = s.replace(symb.symbol, '');
+            f = true;
+            break;
+          }
+        }
+      }
+
+      if (!f) {
+        r = [];
+        return r;
+      }
+    }
+
+    return r;
   }
 
   CheckNonterminal(nonterminal: string): boolean {
-    return (this.G.nonterminalSymbols.indexOf(new Symbol(nonterminal)) !== -1) ? (true) : (false);
-  }
-
-  CheckRghPart(str: string): boolean {
-    for (const s of this.G.terminalSymbols) {
-      while (str.includes(s.symbol)) {
-        str = str.replace(s.symbol, '');
-      }
-    }
-
     for (const s of this.G.nonterminalSymbols) {
-      while (str.includes(s.symbol)) {
-        str = str.replace(s.symbol, '');
+      if (s.symbol === nonterminal) {
+        return true;
       }
     }
-
-    return (str === '') ? (true) : (false);
+    return false;
   }
 
   outputRules(): string {
     let str = '';
-    const l = this.G.inferenceRules.length;
-
-    for (let i = 0; i < l - 1; i++) {
-      str += ' ' + this.G.inferenceRules[i].leftPart + ' → ';
-      const k = this.G.inferenceRules[i].rightPart.length;
-      for (let j = 0; j < k - 1; j++) {
-        str += this.G.inferenceRules[i].rightPart[j] + ' | ';
+    let i = 0;
+    for (const r of this.G.inferenceRules) {
+      str += r.leftPart.symbol + ' → ';
+      let j = 0;
+      for (const rgh of r.rightPart) {
+        for (const s of rgh.rgh) {
+          str += s.symbol;
+        }
+        str += ((++j === r.rightPart.length) ? (' ') : (' | '));
       }
-      if (k !== 0) {
-        str += this.G.inferenceRules[i].rightPart[k - 1];
-      }
-      str += ', ';
-    }
-
-    if (l !== 0) {
-      str += ' ' + this.G.inferenceRules[l - 1].leftPart + ' → ';
-      const k = this.G.inferenceRules[l - 1].rightPart.length;
-      for (let j = 0; j < k - 1; j++) {
-        str += this.G.inferenceRules[l - 1].rightPart[j] + ' | ';
-      }
-      if (k !== 0) {
-        str += this.G.inferenceRules[l - 1].rightPart[k - 1];
-      }
+      str += ((++i === this.G.inferenceRules.length) ? (' ') : (', '));
     }
 
     return str;
   }
 
-  removeUselessSymbols(): any {
-    this.reachableSymbols.push(this.G.initialSymbol);
-    this.removeNonGeneratingSymbols();
-    this.removeUnreachableSymbols();
-  }
+  removeUselessSymbols(): any { }
 
   removeNonGeneratingSymbols(): void {
   }
@@ -167,7 +171,5 @@ export class InputGrammarService {
     return true;
   }
 
-  removeEpsilonRules(): void {
-    for (const epsilon of this.epsilonRules) { }
-  }
+  removeEpsilonRules(): void { }
 }
