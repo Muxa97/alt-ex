@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
-import {InputGrammarService} from '../../services/input-grammar.service';
+import { InputGrammarService } from '../../services/input-grammar.service';
 
 @Component({
   selector: 'app-input-grammar-page',
@@ -15,6 +15,10 @@ export class InputGrammarPageComponent {
     leftPart: new FormControl(),
     rightPart: new FormControl()
   });
+
+  inputTerminals: any;
+  inputNonterminals: any;
+  inputRules: any;
 
   constructor(public grammarService: InputGrammarService) { }
 
@@ -37,5 +41,12 @@ export class InputGrammarPageComponent {
     this.grammarService.addRule(this.grammarForm.controls.leftPart.value, this.grammarForm.controls.rightPart.value);
     this.grammarForm.controls.leftPart.setValue('');
     this.grammarForm.controls.rightPart.setValue('');
+  }
+
+  Mark(): void {
+    this.grammarService.MarkGeneratingSymbols();
+    this.grammarService.MarkReachableSymbols();
+    this.grammarService.IsEmpty();
+    this.grammarService.IsInfinite();
   }
 }

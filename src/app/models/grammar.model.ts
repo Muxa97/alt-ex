@@ -38,11 +38,19 @@ export class Symbol {
   symbol: string;
   isReachable: boolean;
   isGenerating: boolean;
+  isTerminal: boolean;
 
   constructor(s: string) {
     this.symbol = s;
-    this.isGenerating = false;
-    this.isReachable = false;
+    if (s === '\u03b5') {
+      this.isGenerating = true;
+      this.isReachable = true;
+      this.isTerminal = true;
+    } else {
+      this.isGenerating = false;
+      this.isReachable = false;
+      this.isTerminal = false;
+    }
   }
 }
 
@@ -53,3 +61,4 @@ export class RightPart {
     this.rgh = [];
   }
 }
+
